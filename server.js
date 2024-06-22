@@ -1,11 +1,10 @@
-function callback (){
-    console.log("hello00");
-}
+const { log } = require('console');
+var fs = require('fs')
+var os = require('os')
 
-const add = function (a,b,callback){
-    var result = a+b;
-    console.log(result);
-    callback()
-}
+var user = os.userInfo()
+console.log(user);
 
-add(3,4, callback)
+fs.appendFile('greeting.txt', 'Hi '+ user.username + '!',()=>console.log('file created') )
+
+// console.log(os);
