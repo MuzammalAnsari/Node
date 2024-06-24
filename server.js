@@ -14,6 +14,18 @@ app.get('/chicken', (req, res) => {
     res.send(chicken)
 })
 
+app.post('/chicken', (req, res) => {
+    var chicken = {
+        age: Number,
+        quantity: Number,
+        name: String
+    }
+
+    res.send(chicken)
+
+
+})
+
 
 
 app.listen(3000, ()=>{
