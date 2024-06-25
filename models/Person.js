@@ -31,6 +31,6 @@ const personSchema = new mongoose.Schema({
     }
 })
 
-//created a person model
+//created a person schema
 const Person = mongoose.model('Person', personSchema)
 module.exports = Person
