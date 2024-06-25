@@ -31,9 +31,6 @@ app.get('/', (req, res) => {
 // })
 
 
-//import the person route file
-
-
 const personRoutes = require('./routes/personRoutes')
 app.use('/person', personRoutes)
 
