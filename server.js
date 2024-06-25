@@ -44,6 +44,6 @@ app.use('/menu', menuItemRoutes)
 
 
 
-app.listen(3000, ()=>{
+app.listen(PORT, ()=>{
     console.log('server is running on port 3000')
 })
