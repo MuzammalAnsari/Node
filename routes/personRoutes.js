@@ -68,8 +68,8 @@ router.get("/:workType", async (req, res) => {
   }
 });
 
-//PUT method to update person
-router.put("/:id", async (req, res) => {
+// //PUT method to add person in /person/signup
+router.put("/signup", async (req, res) => {
   try {
     const id = req.params.id;
     const data = req.body;
@@ -91,6 +91,7 @@ router.put("/:id", async (req, res) => {
     res.status(500).json(error);
   }
 });
+
 
 //DELETE method to delete person
 router.delete("/:id", async (req, res) => {

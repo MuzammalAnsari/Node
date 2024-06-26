@@ -52,7 +52,7 @@ app.use("/person", personRoutes);
 
 //import the menuItem route file
 const menuItemRoutes = require("./routes/menuItemRoutes");
-app.use("/menu", localAuthMiddleware, menuItemRoutes);
+app.use("/menu",  menuItemRoutes);
 
 app.listen(PORT, () => {
   console.log("server is running on port 3000");
