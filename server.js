@@ -1,26 +1,40 @@
-const express = require('express')
-const app = express()
-const db = require('./db')
-require('dotenv').config()
+const express = require("express");
+const app = express();
+const db = require("./db");
+require("dotenv").config();
+const passport = require("./auth");
+
+const bodyParser = require("body-parser");
+app.use(bodyParser.json()); //req.body
+
+const PORT = process.env.PORT || 3000;
+
+//Middleware function
+const logRequest = (req, res, next) => {
+  console.log(
+    `[${new Date().toLocaleString()}] Request made to  : ${req.originalUrl}`
+  );
+  next(); // move to the next phase
+};
+
+app.use(logRequest);
 
 
 
-const bodyParser = require('body-parser');
-app.use(bodyParser.json());     //req.body
+app.use(passport.initialize());
 
-const PORT = process.env.PORT || 3000
+const localAuthMiddleware = passport.authenticate('local', {session: false})
 
-
-app.get('/', (req, res) => {
-    res.send('Welcome to our Hotel')
-})
+app.get("/", (req, res) => {
+  res.send("Welcome to our Hotel");
+});
 
 // app.get('/chicken', (req, res) => {
 //     var chicken={
 //         age:1,
 //         quantity:2,
 //         name:'hen'
-//     } 
+//     }
 //     res.send(chicken)
 // })
 
@@ -33,17 +47,13 @@ app.get('/', (req, res) => {
 //     res.send(chicken)
 // })
 
-
-const personRoutes = require('./routes/personRoutes')
-app.use('/person', personRoutes)
+const personRoutes = require("./routes/personRoutes");
+app.use("/person", personRoutes);
 
 //import the menuItem route file
-const menuItemRoutes = require('./routes/menuItemRoutes')
-app.use('/menu', menuItemRoutes)
+const menuItemRoutes = require("./routes/menuItemRoutes");
+app.use("/menu", localAuthMiddleware, menuItemRoutes);
 
-
-
-
-app.listen(PORT, ()=>{
-    console.log('server is running on port 3000')
-})
+app.listen(PORT, () => {
+  console.log("server is running on port 3000");
+});
