@@ -45,8 +45,55 @@ router.post("/signup", async (req, res) => {
   }
 });
 
+//Login Route
+router.post("/login", async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    const user = await person.findOne({ username: username });
+
+    if (!user) {
+      return res.status(400).json({ error: "User not found" });
+    }
+    const isPasswordMatch = await user.comparePassword(password);
+    if (!isPasswordMatch) {
+      return res.status(400).json({ error: "Invalid password" });
+    }
+
+    //generate token
+    const payload = {
+      id: user.id,
+      username: user.username,
+    };
+    
+    const token = generateToken(payload)
+    res.status(200).json({ token: token });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+});
+
+
+//Profile Route
+router.get("/profile", jwtAuthMiddleware, async (req, res) => {
+  try {
+    const userData = req.user
+    console.log("userData", userData);
+
+    const userId = userData.id;
+    const user = await person.findById(userId);
+    res.status(200).json({user});
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+});
+
 //GET method to get the person
-router.get("/", async (req, res) => {
+router.get("/", jwtAuthMiddleware, async (req, res) => {
   try {
     const response = await person.find();
     console.log("Data Fetched");
