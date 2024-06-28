@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const person = require('../models/Person')
+const person = require("../models/Person");
+const { jwtAuthMiddleware, generateToken } = require("../jwt");
 
-
-                                            //1st method to define lenght model 
+//1st method to define lenght model
 // app.post('/person', (req, res) => {
 //     const person = new person({
 //         name: req.body.name,
@@ -17,39 +17,45 @@ const person = require('../models/Person')
 //     person.save()
 // })
 
-                                            //2nd method to define
+//2nd method to define
 //POST route to add person
-router.post('/', async(req, res) => {
-    try {
-        const data = req.body
-        const newPerson = new person(data)
-        
-        //save the new person to database
-        const response = await newPerson.save()
-        console.log('data saved')
-        res.status(200).json(response)
-    
-    } catch (error) {
-        console.log(error)
-        res.status(500).json(error)
-        
-    }
-        
-    })
-    
-    //GET method to get the person
-    router.get('/', async(req, res) => {
-        try {
-            const response = await person.find()
-            console.log('Data Fetched');
-            res.status(200).json(response)
-        } catch (error) {
-            console.log(error)
-            res.status(500).json(error)
-        }
-    })
-    
-    
+router.post("/signup", async (req, res) => {
+  try {
+    const data = req.body;
+    const newPerson = new person(data);
+
+    //save the new person to database
+    const response = await newPerson.save();
+    console.log("data saved");
+
+    const payload = {
+      id: response.id,
+      username: response.username,
+    };
+
+    console.log(JSON.stringify(payload));
+
+    const token = generateToken(payload);
+    console.log("Token : ", token);
+
+    res.status(200).json({ response: response, token: token });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+});
+
+//GET method to get the person
+router.get("/", async (req, res) => {
+  try {
+    const response = await person.find();
+    console.log("Data Fetched");
+    res.status(200).json(response);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+});
 
 //GET method to get the particular person through params
 router.get("/:workType", async (req, res) => {
@@ -69,14 +75,14 @@ router.get("/:workType", async (req, res) => {
 });
 
 // //PUT method to add person in /person/signup
-router.put("/signup", async (req, res) => {
+router.put("/", async (req, res) => {
   try {
     const id = req.params.id;
     const data = req.body;
 
-    const response = await person.findByIdAndUpdate(id, data,{
-        new: true, //return the updated document
-        runValidators: true  // run mongoose validation
+    const response = await person.findByIdAndUpdate(id, data, {
+      new: true, //return the updated document
+      runValidators: true, // run mongoose validation
     });
 
     if (!response) {
@@ -85,27 +91,24 @@ router.put("/signup", async (req, res) => {
 
     console.log("data updated");
     res.status(200).json(response);
-
   } catch (error) {
     console.log(error);
     res.status(500).json(error);
   }
 });
 
-
 //DELETE method to delete person
 router.delete("/:id", async (req, res) => {
   try {
-    const id = req.params.id
-    const response = await person.findByIdAndDelete(id)
+    const id = req.params.id;
+    const response = await person.findByIdAndDelete(id);
 
     if (!response) {
       res.status(404).json({ error: "Person not found" });
     }
 
     console.log("data deleted");
-    res.status(200).json({message : "person deleted successfully"});
-
+    res.status(200).json({ message: "person deleted successfully" });
   } catch (error) {
     console.log(error);
     res.status(500).json(error);

@@ -21,7 +21,7 @@ const jwtAuthMiddleware = (req, res, next) => {
     }
 }
 
-//function to generate token
+//function to generate token using user data
 const generateToken = (userData) => {
     return jwt.sign(userData, process.env.JWT_SECRET)
 }
